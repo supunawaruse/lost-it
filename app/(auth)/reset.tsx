@@ -99,7 +99,7 @@ const PwReset = () => {
             }}
           >
             <Image
-              source={images.resetPassword}
+              source={images.authentication}
               resizeMode="contain"
               style={{ height: 250, width: 250 }}
             />

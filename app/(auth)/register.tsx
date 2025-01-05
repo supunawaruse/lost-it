@@ -1,14 +1,10 @@
 import * as React from "react";
 import {
-  Text,
-  TextInput,
-  Button,
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   StatusBar,
   Keyboard,
-  Alert,
   Image,
 } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
@@ -18,8 +14,9 @@ import CustomText from "@/components/customText";
 import CustomInput from "@/components/customInput";
 import CustomButton from "@/components/customButton";
 import images from "@/constants/images";
+import { showErrorAlert } from "@/utils/helpers";
 
-export default function Page() {
+const Register = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
 
@@ -54,14 +51,8 @@ export default function Page() {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err: any) {
-      showErrorAlert(err.errors[0].longMessage);
-      console.error(JSON.stringify(err, null, 2));
+      showErrorAlert(err.errors[0].longMessage, "Authentication");
     }
-  };
-
-  const showErrorAlert = (errorMessage: string) => {
-    const currentTime = new Date().toLocaleTimeString();
-    Alert.alert("Authentication Error", `${errorMessage}`, [{ text: "OK" }]);
   };
 
   const onVerifyPress = async () => {
@@ -198,7 +189,7 @@ export default function Page() {
                 Already have an account?{" "}
                 <Link href="/(auth)/login">
                   <CustomText size={2} weight={4} color="primary">
-                    Login
+                    Login Now
                   </CustomText>
                 </Link>
               </CustomText>
@@ -208,7 +199,7 @@ export default function Page() {
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -234,3 +225,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default Register;

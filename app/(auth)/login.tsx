@@ -18,6 +18,7 @@ import CustomButton from "@/components/customButton";
 import CustomDivider from "@/components/customDivider";
 import CircleImage from "@/components/customCircleImage";
 import { useOAuth } from "@clerk/clerk-expo";
+import { showErrorAlert } from "@/utils/helpers";
 
 const Login = () => {
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
@@ -44,8 +45,6 @@ const Login = () => {
     }
     setLoading(true);
     try {
-      console.log(emailAddress);
-      console.log(password);
       const completeSignIn = await signIn.create({
         identifier: emailAddress,
         password,
@@ -53,7 +52,7 @@ const Login = () => {
 
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err: any) {
-      alert(err.errors[0].message);
+      showErrorAlert(err.errors[0].longMessage, "Authentication");
     } finally {
       setLoading(false);
     }
