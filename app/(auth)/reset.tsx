@@ -53,7 +53,6 @@ const PwReset = () => {
               justifyContent: "center",
               alignItems: "center",
               padding: 20,
-              backgroundColor: "#fff",
               gap: 15,
             }}
           >
@@ -96,7 +95,6 @@ const PwReset = () => {
               justifyContent: "center",
               alignItems: "center",
               padding: 20,
-              backgroundColor: "#fff",
               gap: 15,
             }}
           >
@@ -114,7 +112,7 @@ const PwReset = () => {
               color="hint"
               style={{ textAlign: "center" }}
             >
-              We'll send you a password reset code to your email address
+              Enter the code sent to your email address and set a new password
             </CustomText>
             <CustomInput
               value={code}
