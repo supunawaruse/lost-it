@@ -19,10 +19,10 @@ const GroupCard = () => {
             <Feather name="users" size={24} color="#006FFD" />
           </View>
           <View>
-            <CustomText size={3} color="textPrimary">
+            <CustomText size={3} weight={3} color="textPrimary">
               Group Name
             </CustomText>
-            <CustomText size={2} color="hint">
+            <CustomText size={2} weight={3} color="hint">
               12 members • 12 active items
             </CustomText>
           </View>

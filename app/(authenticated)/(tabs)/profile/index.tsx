@@ -30,18 +30,40 @@ const ProfileScreen = () => {
   const list: any = [
     {
       name: "Listed Items",
+      desc: "Browse Items Listed by You",
       icon: "pricetag-outline",
       onPress: () => {},
     },
     {
       name: "Found Items",
+      desc: "Browse Items Found by You",
       icon: "checkmark-circle-outline",
       onPress: () => {},
     },
-    { name: "Notifications", icon: "notifications-outline", onPress: () => {} },
-    { name: "Privacy Policy", icon: "alert-circle-outline", onPress: () => {} },
-    { name: "Help And Support", icon: "help-buoy-outline", onPress: () => {} },
-    { name: "LogOut", icon: "power-outline", onPress: handleSignOut },
+    {
+      name: "Notifications",
+      desc: "Check Out Your Notifications",
+      icon: "notifications-outline",
+      onPress: () => {},
+    },
+    {
+      name: "Privacy Policy",
+      desc: "View Privacy Policy",
+      icon: "alert-circle-outline",
+      onPress: () => {},
+    },
+    {
+      name: "Help And Support",
+      desc: "Get Help & Support from us",
+      icon: "help-buoy-outline",
+      onPress: () => {},
+    },
+    {
+      name: "LogOut",
+      desc: "Say Goodbye, Until Next Time!",
+      icon: "power-outline",
+      onPress: handleSignOut,
+    },
   ];
 
   return (
@@ -90,15 +112,27 @@ const ProfileScreen = () => {
                   marginBottom: 15,
                   borderRadius: 15,
                   backgroundColor: "#FFFFFF",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 1,
+                  },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 2,
+                  elevation: 2,
                 }}
               >
                 <View style={styles.groupIcon}>
                   <Ionicons name={item.icon || ""} size={24} color="#006FFD" />
                 </View>
-
-                <CustomText size={3} weight={3} style={{ color: "#2F3036" }}>
-                  {item.name}
-                </CustomText>
+                <View>
+                  <CustomText size={3} weight={3} color="textPrimary">
+                    {item.name}
+                  </CustomText>
+                  <CustomText size={2} weight={3} color="subHint">
+                    {item.desc}
+                  </CustomText>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
