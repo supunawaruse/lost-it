@@ -1,3 +1,4 @@
+
 import { Redirect } from "expo-router";
 
 const StartPage = () => {

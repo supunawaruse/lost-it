@@ -1,4 +1,4 @@
-import { useSignIn } from "@clerk/clerk-expo";
+import { useSignIn, useUser } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import icons from "@/constants/icons";
@@ -19,31 +20,52 @@ import CustomDivider from "@/components/customDivider";
 import CircleImage from "@/components/customCircleImage";
 import { useOAuth } from "@clerk/clerk-expo";
 import { showErrorAlert } from "@/utils/helpers";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { doc, getDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/firebaseConfig";
+import { saveDocument } from "@/utils/firebaseMethods";
+import { UserDocument } from "@/models";
+
+export const useWarmUpBrowser = () => {
+  React.useEffect(() => {
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
+  useWarmUpBrowser();
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
   const { signIn, setActive, isLoaded } = useSignIn();
-
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const { user } = useUser();
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } = await startOAuthFlow();
+      const { createdSessionId, setActive } = await startOAuthFlow({
+        redirectUrl: Linking.createURL("/(authenticated)/(tabs)/home", {
+          scheme: "myapp",
+        }),
+      });
       if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+        await setActive!({ session: createdSessionId });
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.error(JSON.stringify(err, null, 2));
     }
-  };
+  }, [user]);
 
   const onSignInPress = async () => {
     if (!isLoaded) {
       return;
     }
-    setLoading(true);
     try {
       const completeSignIn = await signIn.create({
         identifier: emailAddress,
@@ -53,10 +75,40 @@ const Login = () => {
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err: any) {
       showErrorAlert(err.errors[0].longMessage, "Authentication");
-    } finally {
-      setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    const checkUserExistence = async () => {
+      try {
+        const email = user?.primaryEmailAddress?.emailAddress || "";
+        if (!email) {
+          console.warn("No email provided.");
+          return;
+        }
+
+        const docRef = doc(db, "users", email);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          const userData: UserDocument = {
+            firstname: user?.firstName || "",
+            lastName: user?.lastName || "",
+            email: email,
+            timestamp: serverTimestamp(),
+            status: "active",
+          };
+          await saveDocument("users", email, userData);
+        }
+      } catch (error) {
+        console.error("Error checking user existence:", error);
+      }
+    };
+
+    if (user) {
+      checkUserExistence();
+    }
+  }, [user]);
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -70,6 +122,7 @@ const Login = () => {
               resizeMode="cover"
             />
           </View>
+
           <View style={styles.bottomContainer}>
             <CustomText
               color="textPrimary"

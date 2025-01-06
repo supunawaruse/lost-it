@@ -6,6 +6,7 @@ import {
   StatusBar,
   Keyboard,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
@@ -15,6 +16,11 @@ import CustomInput from "@/components/customInput";
 import CustomButton from "@/components/customButton";
 import images from "@/constants/images";
 import { showErrorAlert } from "@/utils/helpers";
+import { db } from "@/firebaseConfig";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { UserDocument } from "@/models";
+import { saveDocument } from "@/utils/firebaseMethods";
+import { isLoading } from "expo-font";
 
 const Register = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -26,6 +32,7 @@ const Register = () => {
   const [lastName, setLastName] = React.useState("");
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
 
@@ -59,11 +66,21 @@ const Register = () => {
     if (!isLoaded) return;
 
     try {
+      setLoading(true);
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
       });
 
       if (signUpAttempt.status === "complete") {
+        const userData: UserDocument = {
+          firstname: signUpAttempt.firstName,
+          lastName: signUpAttempt.lastName,
+          email: signUpAttempt.emailAddress,
+          timestamp: serverTimestamp(),
+          status: "active",
+        };
+
+        await saveDocument("users", signUpAttempt.emailAddress || "", userData);
         await setActive({ session: signUpAttempt.createdSessionId });
         router.replace("/");
       } else {
@@ -71,6 +88,8 @@ const Register = () => {
       }
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,12 +126,20 @@ const Register = () => {
           placeholder="Enter your verification code"
           onChangeText={(code) => setCode(code)}
         />
-        <CustomButton
-          type="fill"
-          title="Verify Email"
-          onPress={onVerifyPress}
-          style={{ width: "80%" }}
-        />
+        {!loading ? (
+          <CustomButton
+            type="fill"
+            title="Verify Email"
+            onPress={onVerifyPress}
+            style={{ width: "80%" }}
+          />
+        ) : (
+          <ActivityIndicator
+            size="large"
+            color="#006FFD"
+            style={{ marginTop: 20 }}
+          />
+        )}
       </View>
     );
   }
@@ -170,7 +197,6 @@ const Register = () => {
                 onChangeText={(text) => setPassword(text)}
               />
             </View>
-
             <CustomButton
               disabled={isButtonDisabled}
               type="fill"

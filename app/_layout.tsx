@@ -1,17 +1,9 @@
-import {
-  RelativePathString,
-  Slot,
-  SplashScreen,
-  Stack,
-  usePathname,
-  useRouter,
-  useSegments,
-} from "expo-router";
+import { Slot, SplashScreen, useRouter, useSegments } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@/utils/cache";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator } from "react-native";
 
 const RootLayout = () => {
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
@@ -43,22 +35,24 @@ const RootLayout = () => {
     const { isLoaded, isSignedIn } = useAuth();
     const segments = useSegments();
     const router = useRouter();
-    const pathName = usePathname();
+    // const pathName = usePathname();
 
     useEffect(() => {
       if (!isLoaded) return;
 
-      const inTabsGroup = segments[0] === "(authenticated)";
       const inAuthGroup = segments[0] === "(auth)";
+      const inAuthenticatedGroup = segments[0] === "(authenticated)";
 
-      if (isSignedIn && !inTabsGroup) {
+      if (isSignedIn && inAuthGroup) {
         router.replace("/(authenticated)/(tabs)/home");
-      } else if (!isSignedIn && !inAuthGroup) {
+      } else if (!isSignedIn && inAuthenticatedGroup) {
         router.replace("/(auth)/login");
-      } else {
-        router.replace(pathName as RelativePathString);
       }
-    }, [isSignedIn, isLoaded]);
+    }, [isSignedIn, segments, isLoaded]);
+
+    if (!isLoaded) {
+      return <ActivityIndicator size={"large"} />;
+    }
 
     return <Slot />;
   };
