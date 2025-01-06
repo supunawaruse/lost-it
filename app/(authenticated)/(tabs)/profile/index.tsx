@@ -1,21 +1,22 @@
 import CustomText from "@/components/customText";
 import { useClerk, useUser } from "@clerk/clerk-expo";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+  Platform,
+  ScrollView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ProfileScreen = () => {
   const { signOut } = useClerk();
   const router = useRouter();
   const { user } = useUser();
-
-  const list: any = [
-    { name: "Listed Items", icon: "pricetag-outline" },
-    { name: "Found Items", icon: "checkmark-circle-outline" },
-    { name: "Notifications", icon: "notifications-outline" },
-    { name: "Privacy Policy", icon: "alert-circle-outline" },
-    { name: "Help And Support", icon: "help-buoy-outline" },
-  ];
 
   const handleSignOut = async () => {
     try {
@@ -25,72 +26,105 @@ const ProfileScreen = () => {
       console.error(JSON.stringify(err, null, 2));
     }
   };
+
+  const list: any = [
+    {
+      name: "Listed Items",
+      icon: "pricetag-outline",
+      onPress: () => {},
+    },
+    {
+      name: "Found Items",
+      icon: "checkmark-circle-outline",
+      onPress: () => {},
+    },
+    { name: "Notifications", icon: "notifications-outline", onPress: () => {} },
+    { name: "Privacy Policy", icon: "alert-circle-outline", onPress: () => {} },
+    { name: "Help And Support", icon: "help-buoy-outline", onPress: () => {} },
+    { name: "LogOut", icon: "power-outline", onPress: handleSignOut },
+  ];
+
   return (
-    <View style={styles.container}>
-      <View style={styles.topSection}>
-        <Image
-          src={user?.imageUrl ? user.imageUrl : ""}
-          style={{
-            width: 150,
-            height: 150,
-            borderRadius: 75,
-            marginBottom: 10,
-          }}
-        />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Platform.OS === "android" ? "#ffffff" : undefined}
+      />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
+      >
+        <View style={styles.container}>
+          <View style={styles.topSection}>
+            <Image
+              src={user?.imageUrl ? user.imageUrl : ""}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 75,
+                marginBottom: 10,
+              }}
+            />
 
-        <CustomText size={6} weight={3} color="textPrimary">
-          {user?.firstName} {user?.lastName}
-        </CustomText>
+            <CustomText size={5} weight={3} color="textPrimary">
+              {user?.firstName} {user?.lastName}
+            </CustomText>
 
-        <CustomText size={4} weight={3} color="hint">
-          {user?.primaryEmailAddress?.emailAddress}
-        </CustomText>
-      </View>
-
-      <View style={styles.middleSection}>
-        {list.map((item: any, index: any) => (
-          <View
-            key={index}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: 10,
-              gap: 15,
-              marginBottom: 10,
-            }}
-          >
-            <Ionicons name={item.icon || ""} size={24} color="#006FFD" />
-            <CustomText size={4} weight={3} style={{ color: "#2F3036" }}>
-              {item.name}
+            <CustomText size={3} weight={3} color="hint">
+              {user?.primaryEmailAddress?.emailAddress}
             </CustomText>
           </View>
-        ))}
-      </View>
 
-      <View style={styles.bottomSection}>
-        <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-          onPress={handleSignOut}
-        >
-          <CustomText>
-            <Ionicons name="power" size={24} color="#FF183D" />
-          </CustomText>
-          <CustomText size={5} weight={3} style={{ color: "#FF183D" }}>
-            Logout
-          </CustomText>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View style={styles.middleSection}>
+            {list.map((item: any, index: any) => (
+              <TouchableOpacity
+                onPress={item.onPress}
+                key={index}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  padding: 10,
+                  gap: 15,
+                  marginBottom: 15,
+                  borderRadius: 15,
+                  backgroundColor: "#FFFFFF",
+                }}
+              >
+                <View style={styles.groupIcon}>
+                  <Ionicons name={item.icon || ""} size={24} color="#006FFD" />
+                </View>
+
+                <CustomText size={3} weight={3} style={{ color: "#2F3036" }}>
+                  {item.name}
+                </CustomText>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#F8F9FE",
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8F9FE",
   },
   topSection: {
-    height: "40%",
     padding: 20,
     paddingHorizontal: 30,
     borderBottomColor: "#E8E9F1",
@@ -99,20 +133,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   middleSection: {
-    height: "50%",
     padding: 20,
-    backgroundColor: "#fff",
-    justifyContent: "space-evenly",
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
   },
-  bottomSection: {
-    height: "10%",
+  groupIcon: {
+    width: 48,
+    height: 48,
+    backgroundColor: "#EFF6FF",
+    borderRadius: 12,
     justifyContent: "center",
-    paddingHorizontal: 30,
-    backgroundColor: "#F8F9FE",
-    borderTopColor: "#E8E9F1",
-    borderTopWidth: 1,
-    padding: 10,
+    alignItems: "center",
   },
 });
 

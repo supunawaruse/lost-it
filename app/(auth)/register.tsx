@@ -230,7 +230,7 @@ const Register = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8F9FE",
   },
   scrollViewContainer: {
     flex: 1,

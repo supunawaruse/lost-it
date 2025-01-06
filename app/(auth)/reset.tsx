@@ -1,6 +1,13 @@
-import { View, StyleSheet, TextInput, Button, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Button,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
-import { Stack } from "expo-router";
+import { Link, Stack, useRouter } from "expo-router";
 import { useSignIn } from "@clerk/clerk-expo";
 import images from "@/constants/images";
 import CustomText from "@/components/customText";
@@ -13,6 +20,12 @@ const PwReset = () => {
   const [code, setCode] = useState("");
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const { signIn, setActive } = useSignIn();
+
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    router.back();
+  };
 
   const onRequestReset = async () => {
     try {
@@ -83,6 +96,9 @@ const PwReset = () => {
               onPress={onRequestReset}
               style={{ width: "100%" }}
             />
+            <TouchableOpacity onPress={handleGoBack}>
+              <CustomText>Go back</CustomText>
+            </TouchableOpacity>
           </View>
         </>
       )}
@@ -143,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#F8F9FE",
   },
 });
 

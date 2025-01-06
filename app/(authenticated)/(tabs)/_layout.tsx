@@ -10,9 +10,8 @@ const TabsLayout = () => {
         tabBarShowLabel: true,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "white",
-          borderTopColor: "#0061FF1A",
-          borderTopWidth: 1,
+          backgroundColor: "#F8F9FE",
+          borderTopColor: "transparent",
           minHeight: 60,
         },
       }}
@@ -54,14 +53,14 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="notifications"
+        name="messages"
         options={{
-          title: "Notifications",
+          title: "Messages",
           tabBarIcon: ({ focused }) => (
             <TabIcon
               Icon={(props: any) => (
                 <Ionicons
-                  name={focused ? "notifications" : "notifications-outline"}
+                  name={focused ? "chatbox" : "chatbox-outline"}
                   {...props}
                   color={focused ? "#0061ff" : "#666876"}
                   size={24}

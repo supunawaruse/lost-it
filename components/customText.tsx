@@ -5,7 +5,7 @@ interface CustomTextProps extends TextProps {
   children: ReactNode;
   size?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
   weight?: 1 | 2 | 3 | 4 | 5;
-  color?: "primary" | "hint" | "textPrimary" | "subHint";
+  color?: "primary" | "hint" | "textPrimary" | "subHint" | "textSub";
   style?: TextStyle;
 }
 
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
 
   primary: { color: "#006FFD" },
   textPrimary: { color: "#1F2024" },
+  textSub: { color: "#2F3036" },
   hint: { color: "#71727A" },
   subHint: { color: "#8F9098" },
 });
