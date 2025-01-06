@@ -1,19 +1,19 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import icons from "@/constants/icons";
 import { TabIcon } from "@/components/tabIcon";
+import { Ionicons } from "@expo/vector-icons";
 
 const TabsLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
+        headerShown: false,
         tabBarStyle: {
           backgroundColor: "white",
-          position: "absolute",
           borderTopColor: "#0061FF1A",
           borderTopWidth: 1,
-          minHeight: 70,
+          minHeight: 60,
         },
       }}
     >
@@ -21,19 +21,53 @@ const TabsLayout = () => {
         name="home"
         options={{
           title: "Home",
-          headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon={icons.home} title="Home" focused={focused} />
+            <TabIcon
+              Icon={(props: any) => (
+                <Ionicons
+                  name={focused ? "home" : "home-outline"}
+                  {...props}
+                  color={focused ? "#0061ff" : "#666876"}
+                  size={24}
+                />
+              )}
+            />
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="explore"
+      <Tabs.Screen
+        name="groups"
         options={{
-          title: "Explore",
-          headerShown: false,
+          title: "Groups",
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon={icons.search} title="Explore" focused={focused} />
+            <TabIcon
+              Icon={(props: any) => (
+                <Ionicons
+                  name={focused ? "people" : "people-outline"}
+                  {...props}
+                  color={focused ? "#0061ff" : "#666876"}
+                  size={24}
+                />
+              )}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: "Notifications",
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              Icon={(props: any) => (
+                <Ionicons
+                  name={focused ? "notifications" : "notifications-outline"}
+                  {...props}
+                  color={focused ? "#0061ff" : "#666876"}
+                  size={24}
+                />
+              )}
+            />
           ),
         }}
       />
@@ -41,12 +75,20 @@ const TabsLayout = () => {
         name="profile"
         options={{
           title: "Profile",
-          headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon={icons.person} title="Profile" focused={focused} />
+            <TabIcon
+              Icon={(props: any) => (
+                <Ionicons
+                  name={focused ? "person-circle" : "person-circle-outline"}
+                  {...props}
+                  color={focused ? "#0061ff" : "#666876"}
+                  size={24}
+                />
+              )}
+            />
           ),
         }}
-      /> */}
+      />
     </Tabs>
   );
 };
